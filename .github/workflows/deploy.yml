@@ -1,0 +1,41 @@
+name: Desplegar Pixel Brush a GitHub Pages
+
+# 1. Cuándo se ejecuta
+on:
+  push:
+    branches: ["main"] 
+
+# 2. Permisos que necesita el robot de GitHub para publicar la página
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 3. El Trabajo
+jobs:
+  deploy:
+    name: Desplegar a Internet
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    
+    steps:
+      # A. Descargar tus 3 archivos
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      # B. Configurar el entorno de Pages
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+
+      # C. Empaquetar todo lo que está en la carpeta actual (path: '.')
+      - name: Subir archivos
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.' 
+
+      # D. Publicar la página web
+      - name: Desplegar a GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
